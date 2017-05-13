@@ -1,0 +1,43 @@
+#
+# [file:#lines]
+# desc
+#
+
+[http.c:65]
+The return address can be overwritten by the character pointer buf[4096] which can overflow when http_read_line is called. There is no size checking in that function and the request is copied in the array till a '\n' is met. 
+Request  : "A"*4108 + '\0'*16 + 0xbfffdde0 + shellcode + "\r\n\r\n"
+16 byte null string string to cover the four character pointers stored between buffer and return address. '\n' avoided in the code before null to make sp1 null(69)
+Canaries : Terminator canaries will definitely avoid the attack(consist of \0, CRLF) as code terminates on seing '\n'. Random canaries can be used if the attacker is not able to know it beforehand but can be overwritten with the same canary value in case attacker is able to see the stack content.
+    65: if (http_read_line(fd, buf) < 0)
+    69: sp1 = strchr(buf, ' ');
+    70: if (!sp1)
+    71:    return "Cannot parse HTTP request (1)";
+
+[http.c:274]
+pn is of size 1024 and name can be of size 2048. Here handler can be overwritten by pn in case name is too large and causes a SIGSEGV when called. 
+Request : req = "GET /" + "A"*1012 + " HTTP/1.0\r\n\r\n"
+Canaries : This problem cannot be solved by canaries
+	274: strcat(pn, name);
+	288: handler(fd, pn);
+
+[http.c:121]
+The character pointer buf[4096] can overflow when http_read_line is called as there is no size checking in that function and the request is copied in the array till a '\n' is met. 
+Request  : "GET / HTTP1.0\r\n" + A"*4120 + "\r\n\r\n"
+Canaries : Terminator canaries will definitely avoid the attack(consist of \0, CRLF) as code terminates on seing '\n'. Random canaries can be used if the attacker is not able to know it beforehand but can be overwritten with the same canary value in case attacker is able to see the stack content.    121: if (http_read_line(fd, buf) < 0)
+    128: char *sp = strchr(buf, ' ');
+    129: if (!sp)
+    130: 	return "Header parse error (1)";
+
+[http.c:304]
+buf can overflow as it is the concatenation of pn(1024) and another non-null string.
+Canaries : Terminator canaries will definitely avoid the attack(consist of \0, CRLF) as code terminates on seing '\n'. Random canaries can be used if the attacker is not able to know it beforehand but can be overwritten with the same canary value in case attacker is able to see the stack content.    121: if (http_read_line(fd, buf) < 0)
+	303: char buf[1024];
+    304:    sprintf(buf, "%s%s", pn, getenv("PATH_INFO"));
+
+[zookd.c:63]
+The character pointer env[4096] can be overflown when http_request_line is called. Here buffer is itself 4096 
+Request : "GET / " + "A"*4090 + '\0'*12 +"\r\n\r\n"  
+buff[4096] doesn't overwrite its own return address but env gets overflown and changes the return address of process_client function
+Canaries : Terminator canaries will definitely avoid the attack(consist of \0, CRLF) as code terminates on seing '\n'. Random canaries can be used if the attacker is not able to know it beforehand but can be overwritten with the same canary value in case attacker is able to see the stack content.	(zookd.c) 63: if ((errmsg = http_request_line(fd, reqpath, sizeof(reqpath), env, 
+	              &env_len)))
+	(http.c)  88: envp += sprintf(envp, "SERVER_PROTOCOL=%s", sp2) + 1; 	

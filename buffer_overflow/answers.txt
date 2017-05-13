@@ -1,0 +1,32 @@
+## Q2
+exploit-2a.py triggers vul:1 (return address overwrite) while exploit-2b.py triggers vul:2   (data-structure(function pointer) overwrite) given in bugs.txt.
+
+## Q3
+Attack was implemented for vulnerability 1. The same can be done with vul:3 and vul:4 as they are similar to vul:1. Same is not possible with vul:5 as the scope of overflowing the buffer in the process_client function is limited (otherwise buffer will oweflow in http_request_line itself). The attack can be done for vul:2 by attaching the shellcode to the URI and over-writing the handler with shellcode's address.
+
+## Q4
+Attack was implemented for vulnerability 1 and 2. The same can be done with vul:3 and vul:4 as they are similar to vul:1. Same is not possible with vul:5 as the scope of overflowing the buffer in the process_client function is limited (otherwise buffer will oweflow in http_request_line itself) 
+
+## Q5
+(5.1)
+Description: We can breach confidentiality by accessing database files needed for authentication (person.db) using GET request.
+req = "GET /zoobar/db/person/person.db HTTP1.0\r\n\r\n"	
+Limitation: It risks confidentiality but it can't do any internal error to the server.
+Consequence: Attacker gets access to the lofin id and passwords of all users.
+Why it works: There is no check on the file getting asked for in the "GET" request protocol.
+Prevention: Easy fix is to make the folder "zookbar" unaccessible to the program.
+
+(5.2)
+Description: DoS attack. We can ask for a heavy file using GET request (image file) and create multiple "GET" request by forking in loop. HTTP POST DoS attack is a special example were CONTENT LENGTH given is huge and the data is transferred at a very slow rate from multiple clients. The forked child remain busy for long with a sinle client.
+Limitation: It causes temporary denial of service. No permanent damage caused to server.
+Consequence: Due to over coagulation of requests, server won't be able to process the requests of normal users, will crash due to over occupancy of RAM.
+Why it works: There is no timeout specified in the code (time taken to get the complete request, specially for POST DoS attack)
+Prevention: Keep a limited timeout period to receive complete request from client. Keep on checking the RAM utilised and number of forks and accept new requests accordingly.
+
+(5.3)
+Description: Crucial executables in the folders like "/bin" can be executed by framing a proper GET request.
+req= "GET /../../../bin/sh HTTP1.0\r\n\r\n"
+Limitation: Many crucial files requiring root access cannot be run.
+Consequence: Important executables can be run and contents of system related files can be seen ("/etc/passwd" etc)
+Why it works: Isolation hasn't been done properly.
+Prevention: Checking for "../" in the file path received from GET request.
